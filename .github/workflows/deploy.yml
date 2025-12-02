@@ -1,0 +1,48 @@
+name: CI - Test QA Interview Flask App
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  test-flask:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      # Start qa_interview.py in background
+      - name: Start Flask app
+        run: |
+          nohup python qa_interview.py > flask.log 2>&1 &
+          sleep 3
+
+      - name: Run API tests
+        run: |
+          echo "Testing GET /factorial"
+          curl -f http://127.0.0.1:6464/factorial > /dev/null
+
+          echo "Testing POST /factorial"
+          curl -f -X POST -d "number=5" http://127.0.0.1:6464/factorial
+
+          echo "Testing /terms"
+          curl -f http://127.0.0.1:6464/terms > /dev/null
+
+          echo "Testing /privacy"
+          curl -f http://127.0.0.1:6464/privacy > /dev/null
+
+      - name: Show Flask logs
+        if: always()
+        run: cat flask.log
