@@ -40,6 +40,10 @@ def privacy():
     "Return privacy statement"
     return "This is the privacy document. We are not yet ready with it. Stay tuned!"
     
+@app.route("/about")
+def about():
+    "Return about page"
+    return render_template('about.html')
 
 #---START OF SCRIPT
 if __name__ == '__main__':
