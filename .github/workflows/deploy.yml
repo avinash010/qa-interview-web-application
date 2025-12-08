@@ -1,4 +1,4 @@
-name: CI-Test-QA-Interview-Flask-App
+name: CI-Test-QA-Interview
 
 on:
   push:
